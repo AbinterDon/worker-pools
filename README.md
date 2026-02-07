@@ -46,5 +46,8 @@ This is a simple Go project demonstrating the Worker Pool pattern. It uses:
 - **Why**: The task is independent, low frequency, and doesn't share a limited pool of resources.
 
 #### 3. Worker Pool (Controlled Concurrency)
-- **Scenario**: Resizing 10,000 product images for an e-commerce site.
-- **Why**: CPU/Memory is limited. Opening 10,000 goroutines to process heavy images at once would crash the server. A pool of 8 or 16 workers ensures steady progress.
+- **Scenario 1: Image Processing**: Resizing 10,000 product images. Workers ensure CPU isn't starved and the server remains responsive.
+- **Scenario 2: Web Scraping**: Crawling thousands of URLs. Workers act as rate-limiters to avoid being blocked by the target site.
+- **Scenario 3: Log Analysis**: Parsing GBs of logs. Breaking files into chunks and processing them in parallel using a fixed set of workers.
+- **Scenario 4: Database Migration**: Moving millions of records. Workers ensure DB connection limits are respected.
+- **Scenario 5: Background Jobs**: Handling asynchronous tasks (like PDF generation or email blasts) in a web server without blocking requests.
