@@ -3,56 +3,68 @@ package main
 import (
 	"fmt"
 	"sync"
+	"time"
+)
+
+// ANSI color constants
+const (
+	Reset  = "\033[0m"
+	Red    = "\033[31m"
+	Green  = "\033[32m"
+	Yellow = "\033[33m"
+	Blue   = "\033[34m"
+	Purple = "\033[35m"
+	Cyan   = "\033[36m"
+	Gray   = "\033[37m"
 )
 
 func main() {
-	fmt.Println("Worker Pool Practice")
+	fmt.Printf("%s==========================================%s\n", Cyan, Reset)
+	fmt.Printf("%s🚀 Worker Pool Practice: Enhanced Output%s\n", Cyan, Reset)
+	fmt.Printf("%s==========================================%s\n", Cyan, Reset)
 
-	// Create a WaitGroup to wait for all goroutines to complete
 	var wg sync.WaitGroup
-
-	// Create channels for jobs and results
 	jobs := make(chan int, 100)
 	results := make(chan int, 100)
 
-	// Start 3 worker goroutines
+	// Start 3 workers
+	workerColors := []string{Red, Green, Yellow}
 	for i := 1; i <= 3; i++ {
-		// Increment the counter for each goroutine
 		wg.Add(1)
-
-		// Start a worker goroutine
-		go worker(i, jobs, results, &wg)
+		go worker(i, workerColors[i-1], jobs, results, &wg)
 	}
 
-	// Send 10 jobs to the jobs channel
+	// Send 10 jobs
+	fmt.Printf("%s[SYSTEM] Sending 10 jobs to the pool...%s\n", Gray, Reset)
 	for j := 1; j <= 10; j++ {
-		// Send a job to the jobs channel
 		jobs <- j
 	}
-	// Close the jobs channel to signal that no more jobs will be sent
 	close(jobs)
 
-	// Wait for all worker goroutines to complete
+	// Wait for completion
 	wg.Wait()
-	// Close the results channel to signal that no more results will be sent
 	close(results)
 
-	// Print all the results
+	// Final Summary
+	fmt.Printf("\n%s==========================================%s\n", Purple, Reset)
+	fmt.Printf("%s📊 EXECUTION SUMMARY%s\n", Purple, Reset)
+	fmt.Printf("%s==========================================%s\n", Purple, Reset)
 	for ans := range results {
-		fmt.Println("Result:", ans)
+		fmt.Printf("✅ %sResult: %-3d%s\n", Gray, ans, Reset)
 	}
+	fmt.Printf("%s==========================================%s\n", Purple, Reset)
 }
 
-func worker(id int, jobs <-chan int, results chan<- int, wg *sync.WaitGroup) {
-	// Decrement the counter when the goroutine completes
+func worker(id int, color string, jobs <-chan int, results chan<- int, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	// Loop over the jobs channel and process each job
 	for j := range jobs {
-		// Print the job being processed
-		fmt.Println("Worker", id, "processing job", j)
+		timestamp := time.Now().Format("15:04:05")
+		fmt.Printf("[%s] %sWorker %d%s | 🛠️  Processing job %-2d\n", timestamp, color, id, Reset, j)
 
-		// Send the result to the results channel
+		time.Sleep(time.Duration(500+(id*100)) * time.Millisecond) // Simulate slightly different processing times
+
+		fmt.Printf("[%s] %sWorker %d%s | ✅ Finished job %-2d\n", timestamp, color, id, Reset, j)
 		results <- j * 2
 	}
 }
