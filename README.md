@@ -25,6 +25,16 @@ This is a simple Go project demonstrating the Worker Pool pattern. It uses:
 -   `sync.WaitGroup` to coordinate completion.
 -   Buffered channels to manage jobs and results.
 
+### Concurrency Paradigms Comparison
+| Paradigm | Resource Control | Performance | Complexity | Use Case |
+| :--- | :--- | :--- | :--- | :--- |
+| **Synchronous** | Excellent | Poor (Slow) | Low | Simple scripts, linear logic |
+| **Unrestricted** | Poor (Risk) | Peak (Fast) | Medium | Small number of short tasks |
+| **Worker Pool** | **Excellent** | **High/Stable** | **High** | **High load, limited external resources** |
+
+> [!IMPORTANT]
+> **The Resource Bottleneck**: Unrestricted concurrency can crash external resources (Databases, APIs). Worker Pools act as a "Throttle" to ensure high performance without overwhelming the infrastructure.
+
 ---
 
 ## 中文
@@ -47,3 +57,13 @@ This is a simple Go project demonstrating the Worker Pool pattern. It uses:
 這是一個簡單的 Go 語言練習專案，展示了 Worker Pool 的基本實作，使用了：
 -   `sync.WaitGroup` 來協調併發完成。
 -   Buffered channels (有緩衝的通道) 來管理任務與結果。
+
+### 併發模式比較
+| 模式 | 資源控制 | 執行效能 | 實作難度 | 適合情境 |
+| :--- | :--- | :--- | :--- | :--- |
+| **同步處理** | 極佳 | 低 (緩慢) | 低 | 簡單腳本、線性邏輯 |
+| **無限制併發** | 差 (有崩潰風險) | 極高 | 中 | 少量且獨立的短任務 |
+| **Worker Pool** | **極佳** | **高且穩定** | **高** | **高負載、有外部資源限制** |
+
+> [!IMPORTANT]
+> **資源瓶頸觀點**：無限制的併發（如直接使用 `go func()`）可能會壓垮外部資源（如資料庫、外部 API）。Worker Pool 扮演「調節閥」的角色，在提升效能的同時，保護後端基礎設施不被瞬間湧入的請求擊垮。
