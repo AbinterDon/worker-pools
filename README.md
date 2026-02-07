@@ -67,3 +67,23 @@ This is a simple Go project demonstrating the Worker Pool pattern. It uses:
 
 > [!IMPORTANT]
 > **資源瓶頸觀點**：無限制的併發（如直接使用 `go func()`）可能會壓垮外部資源（如資料庫、外部 API）。Worker Pool 扮演「調節閥」的角色，在提升效能的同時，保護後端基礎設施不被瞬間湧入的請求擊垮。
+
+### Real-world Scenarios (實際應用場景)
+
+#### 1. Synchronous (同步)
+- **Scenario**: A tool to back up 5 local configuration files.
+- **Why**: The files are few, the operation is fast, and the setup cost of concurrency outweighs the benefits.
+- **情境**: 備份 5 個本地設定檔。
+- **原因**: 數量極少且執行極快，併發的額外開銷（Setup cost）反而會讓程式變慢。
+
+#### 2. Unrestricted Concurrency (無限制併發 - `go func()`)
+- **Scenario**: Sending an email notification after a user signs up.
+- **Why**: The task is independent, low frequency, and doesn't share a limited pool of resources.
+- **情境**: 使用者註冊後發送一封電子郵件通知。
+- **原因**: 任務完全獨立、頻率低且不涉及需要精確限流的共用資源。
+
+#### 3. Worker Pool (受控併發)
+- **Scenario**: Resizing 10,000 product images for an e-commerce site.
+- **Why**: CPU/Memory is limited. Opening 10,000 goroutines to process heavy images at once would crash the server. A pool of 8 or 16 workers ensures steady progress.
+- **情境**: 為電商網站縮放 10,000 張商品圖片。
+- **原因**: CPU 與記憶體資源有限。若同時啟動 10,000 個任務處理高解析度圖片會導致伺服器斷電或 OOM (記憶體溢出)。使用固定數量的 Worker（如 8 或 16 個）可確保系統穩定運行。
